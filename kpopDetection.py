@@ -9,6 +9,8 @@ import torchvision.transforms as transforms
 import affList as afl
 import base64
 import random
+import time
+import datetime
 
 class CNN(nn.Module):
 
@@ -54,7 +56,6 @@ def detect(image, model):
           detect_face = image[y:y+height, x:x+width]
           detect_face = cv2.resize(detect_face, (64, 64))
           if detect_face.shape[0] < 64:
-              print("tuuka")
               continue
           detect_face = cv2.resize(detect_face, (64,64))
           transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -62,9 +63,7 @@ def detect(image, model):
           detect_face = detect_face.view(1,3,64,64)
 
           output = model(detect_face)
-          print(f"output{output}")
           name_type = output.argmax(dim=1, keepdim=True)
-          print(name_type)
           name = type_to_name(name_type)
   else:
     name = None
@@ -88,8 +87,8 @@ def type_to_name(name_type):
 
 def main():
   st.set_page_config(layout="centered")
+  sidebar()
   image_path = "./background5.png"
-
 # 画像ファイルをbase64形式にエンコード
   with open(image_path, "rb") as img_file:
     encoded_image = base64.b64encode(img_file.read()).decode()
@@ -108,12 +107,24 @@ def main():
      st.session_state['isTurned'] = True
   if 'output' not in st.session_state:
      st.session_state['output'] = None
-     print(f"何と{st.session_state['isTurned']}です")
-     print(f"何と{st.session_state['output']}です")
+  if 'use_count' not in st.session_state:
+     st.session_state['use_count'] = 0
   #タイトルの表示
   st.markdown('''<h1 style="color: dimgrey;">KPOP事務所顔AI診断</h1>''', unsafe_allow_html=True)
   #アプリの説明の表示
-  st.markdown("韓国の事務所別の顔を識別するアプリです")
+  st.markdown('''
+              <p style='line-height: 1.2;'>
+                あなたが韓国のどの事務所顔に当てはまるか診断するアプリです。HYBE、SM、JYP、YG、STARSHIPのどれかの事務所に診断されます。
+              </p>
+              <p style='line-height: 1.2;'>
+                KPOP好きの大学生達がKPOPを少しでも広めるために作りました。診断の精度は試行錯誤中なのであくまでエンタメとしてお楽しみください。
+              <p style='line-height: 1.2;'>
+                写真を入力してぜひお試しください！
+              </p>
+              <p style='line-height: 1.2;'>
+                当サイトの診断結果画像やコンテンツをSNSで共有していただいても構いません。
+              </p>
+              ''', unsafe_allow_html=True)
 
   is_men = st.radio("性別を選択", ("男性", "女性"), horizontal=True, args=[1, 0])
 
@@ -126,7 +137,6 @@ def main():
 
   st.button('判定結果を見る', on_click=change_page, disabled=st.session_state['isTurned'])
   num = random.randint(0, len(afl.ad_urls)) - 1
-  print(num)
   ad_url = afl.ad_urls[num]
   ad_img = afl.ad_imgs[num]
   ad_html = f"""
@@ -138,9 +148,30 @@ def main():
               </center>
  
             """
-  print(ad_url)
-  print(ad_img)
   st.markdown(ad_html, unsafe_allow_html=True)
+
+def sidebar():
+   st.sidebar.markdown('''
+                       <p>
+                        \n
+                       </p>
+                       <h2>当サイトについて</h2>
+                       <p>
+                        当サイトでは機械学習を用いて事務所顔を診断しております。\n
+                        事務所の代表的なメンバーから機械学習を行なっているため、事務所メンバー本人を診断しても他の事務所と診断される可能性がありますのでご注意ください。\n
+                        なお顔診断に用いた画像は診断機能の他、追加学習を含む一切に利用しておりません。安心してお楽しみください。\n
+                        当サイトのコンテンツを他の商業目的で使用する場合は、事前に許可を取得してください。
+                       </p>
+                       <h2>管理人について</h2>
+                       <p>
+                        当サイトは共同運営人で運営しております。お問い合わせについてはお問い合わせ欄に記載のメールアドレスにご連絡ください。
+                       </p>
+                       <h2>お問い合わせ</h2>
+                       <p>
+                        heheko743@gmail.com
+                       </p>
+                       <p>最終更新日：2024年3月3日</p>
+                       ''', unsafe_allow_html=True)
 
 
 def next_page():
@@ -178,21 +209,15 @@ def next_page():
   col2.button('戻る', on_click=back_page())
 
 
-
-def link_set(link):
-  container = st.container(border=True, height=150)
-  col1, col2 = container.columns([3,1])
-  col1.header(f"check out this [ここをクリック]({link})")
-  col2.image('https://gd.image-qoo10.jp/li/469/522/5523522469.g_400-w-st_g.jpg')  
-
 def change_page():
    st.session_state['page_control'] = 1
+   st.session_state['use_count'] += 1
+   print(datetime.datetime.fromtimestamp(time.time()))
 
 def back_page():
    st.session_state['page_control'] = 0
    st.session_state['output'] = None
    st.session_state['isTurned'] = True
-   print('backpage 関数')
    
    
 def img_upload():
@@ -209,10 +234,8 @@ def img_upload():
       st.session_state['output'] = detect(image, model)
       if st.session_state['output'] == None:
         st.markdown(""":red[顔を認識できませんでした。別の画像を試してください。] """, unsafe_allow_html=True)
-      print(f"{st.session_state['output']}です")
       if st.session_state['output'] != None:
          st.session_state['isTurned'] = False
-    print('男性を選択')
     
   elif st.session_state['sex'] == '女性':
     model = CNN()
@@ -226,8 +249,6 @@ def img_upload():
       st.session_state['output'] = detect(image, model)
       if st.session_state['output'] == None:
         st.markdown(""":red[顔を認識できませんでした。別の画像を試してください。] """, unsafe_allow_html=True)
-      print(f"{st.session_state['output']}")
-    print('女性を選択') 
 
   if st.session_state['output'] != None:
     st.session_state['isTurned'] = False
