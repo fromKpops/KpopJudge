@@ -114,15 +114,24 @@ def main():
   #アプリの説明の表示
   st.markdown('''
               <p style='line-height: 1.2;'>
+              <font size=2 >
                 あなたが韓国のどの事務所顔に当てはまるか診断するアプリです。HYBE、SM、JYP、YG、STARSHIPのどれかの事務所に診断されます。
+              </font>
               </p>
               <p style='line-height: 1.2;'>
+              <font size=2 >
                 KPOP好きの大学生達がKPOPを少しでも広めるために作りました。診断の精度は試行錯誤中なのであくまでエンタメとしてお楽しみください。
-              <p style='line-height: 1.2;'>
-                写真を入力してぜひお試しください！
+              </font>
               </p>
               <p style='line-height: 1.2;'>
+              <font size=2 >
+                写真を入力してぜひお試しください！
+              </font>
+              </p>
+              <p style='line-height: 1.2;'>
+              <font size=2 >
                 当サイトの診断結果画像やコンテンツをSNSで共有していただいても構いません。
+              </font>
               </p>
               ''', unsafe_allow_html=True)
 
@@ -196,14 +205,15 @@ def next_page():
   path = f"./output_img/{output}_out.png"
   img = np.array(Image.open(path))
   st.image(img)
-  urls = afl.url_dic[output]
-  imgs = afl.img_dic[output]
-  intros = afl.intro_dic[output]
-
-  for i in range(len(urls)):
-    container =  st.container()
-    html = f"""<div class='shr_item' style='position:relative; min-height:158px; margin:12px 0; padding:9px 10px; border:1px solid #dbdbdb; border-radius:1px; background-color:#fff;'><div class='item_dtl' style='position:relative; height:158px; padding:5px; border:1px solid #f0f1f4;'><span class='thmb' style='float:left; overflow:hidden; width:156px; height:156px; margin-right:9px; border:1px solid #e7e7e7;'><a href={urls[i]}><img src={imgs[i]} width='156' alt='' style='vertical-align: middle; border: 0 none;'></a></span><p class='tit' style='overflow:hidden; max-height:68px; margin-bottom:7px; line-height:17px; color:#000;'>[Qoo10] {intros[i]}</p><span class='url' style='position:absolute; left:170px; bottom:10px; display:block; font-weight:bold; color:#9197a3;'>WWW.QOO10.JP</span></div></div>"""
-    container.markdown(html ,unsafe_allow_html=True)
+  if output != None:
+    urls = afl.url_dic[output]
+    imgs = afl.img_dic[output]
+    intros = afl.intro_dic[output]
+    for i in range(len(urls)):
+      container =  st.container()
+      html = f"""<div class='shr_item' style='position:relative; min-height:158px; margin:12px 0; padding:9px 10px; border:1px solid #dbdbdb; border-radius:1px; background-color:#fff;'><div class='item_dtl' style='position:relative; height:158px; padding:5px; border:1px solid #f0f1f4;'><span class='thmb' style='float:left; overflow:hidden; width:156px; height:156px; margin-right:9px; border:1px solid #e7e7e7;'><a href={urls[i]}><img src={imgs[i]} width='156' alt='' style='vertical-align: middle; border: 0 none;'></a></span><p class='tit' style='overflow:hidden; max-height:68px; margin-bottom:7px; line-height:17px; color:#000;'>[Qoo10] {intros[i]}</p><span class='url' style='position:absolute; left:170px; bottom:10px; display:block; font-weight:bold; color:#9197a3;'>WWW.QOO10.JP</span></div></div>"""
+      container.markdown(html ,unsafe_allow_html=True)
+      
   col1, col2 = st.columns([9,1])
   col1.write("")
   col2.button('戻る', on_click=back_page())
