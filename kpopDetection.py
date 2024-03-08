@@ -207,12 +207,36 @@ def next_page():
   img = np.array(Image.open(path))
   st.image(img)
   if output != None:
-    urls = afl.url_dic[output]
+    qoo10_urls = afl.qoo10_url_dic[output]
+    amz_urls = afl.amz_url_dic[output]
     imgs = afl.img_dic[output]
-    intros = afl.intro_dic[output]
-    for i in range(len(urls)):
+    qoo10_intros = afl.qoo10_intro_dic[output]
+    amz_intros = afl.amz_intro_dic[output]
+    for i in range(len(amz_urls)):
       container =  st.container()
-      html = f"""<div class='shr_item' style='position:relative; min-height:158px; margin:12px 0; padding:9px 10px; border:1px solid #dbdbdb; border-radius:1px; background-color:#fff;'><div class='item_dtl' style='position:relative; height:158px; padding:5px; border:1px solid #f0f1f4;'><span class='thmb' style='float:left; overflow:hidden; width:156px; height:156px; margin-right:9px; border:1px solid #e7e7e7;'><a href={urls[i]}><img src={imgs[i]} width='156' alt='' style='vertical-align: middle; border: 0 none;'></a></span><p class='tit' style='overflow:hidden; max-height:68px; margin-bottom:7px; line-height:17px; color:#000;'>[Qoo10] {intros[i]}</p><span class='url' style='position:absolute; left:170px; bottom:10px; display:block; font-weight:bold; color:#9197a3;'>WWW.QOO10.JP</span></div></div>"""
+      html = f"""
+              <div class='shr_item' style='position:relative; min-height:158px; margin:12px 0; padding:9px 10px; border:1px solid #dbdbdb; border-radius:1px; background-color:#fff;'>
+                  <div class='item_dtl' style='position:relative; height:168px; padding:5px; border:1px solid #f0f1f4;'>
+                      <span class='thmb' style='float:left; overflow:hidden; width:156px; height:156px; margin-right:9px; border:1px solid #e7e7e7;'>          
+                          <img src={imgs[i]} width='156' alt='' style='vertical-align: middle; border: 0 none;'>
+                      </span>
+                      <p class='tit' style='overflow:hidden; max-height:68px; margin-bottom:7px; line-height:17px; color:#000;'>
+                          [Qoo10] 
+                          <a href={qoo10_urls[i]}>
+                            {qoo10_intros[i]}
+                          </a>
+                      </p>
+                      <br>
+                      <br>
+                      <p class='tit' style='overflow:hidden; max-height:68px; margin-bottom:7px; line-height:17px; color:#000;'>
+                          [Amazon] 
+                          <a href={amz_urls[i]}>
+                            {amz_intros[i]}
+                          </a>
+                      </p>
+                  </div>
+              </div>
+              """
       container.markdown(html ,unsafe_allow_html=True)
       
   col1, col2 = st.columns([9,1])
