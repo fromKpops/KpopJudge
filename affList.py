@@ -92,7 +92,7 @@ amz_intro_dic = {'HYBE':HYBE_amz_intro, 'JYP':JYP_amz_intro, 'SM':SM_amz_intro, 
 
 
 
-
+#替え用のHTML
 """
 <div class='shr_item' style='position:relative; min-height:158px; margin:12px 0; padding:9px 10px; border:1px solid #dbdbdb; border-radius:1px; background-color:#fff;'>
     <div class='item_dtl' style='position:relative; height:158px; padding:5px; border:1px solid #f0f1f4;'>
